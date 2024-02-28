@@ -1,5 +1,9 @@
 homepage: "https://www.sfbx.io"
-documentation: "https://sfbx.gitbook.io/appconsent/"
+documentation: "https://docs.sfbx.io/"
 versions:
+  # Latest version
+  - sha: 748d8ff21aac531150077cbb41f47284d8c59865
+    changeNotes: EnableGCM and Target countries fields has been added. And GCM v2 has been added.
+  # Older versions
   - sha: 990bbdc01b78dc67af326574800c09f774f9bf74
     changeNotes: Initial release / Minor changes.
