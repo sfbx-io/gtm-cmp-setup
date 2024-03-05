@@ -2,8 +2,10 @@ homepage: "https://www.sfbx.io"
 documentation: "https://docs.sfbx.io/"
 versions:
   # Latest version
+  - sha: cc7785524840cdbc8c1c0986ee8c5ef9babcb247
+    changeNotes: Fix bug - CMP no longer displayed due to configuration error
+  # Older versions
   - sha: 748d8ff21aac531150077cbb41f47284d8c59865
     changeNotes: EnableGCM and Target countries fields has been added. And GCM v2 has been added.
-  # Older versions
   - sha: 990bbdc01b78dc67af326574800c09f774f9bf74
     changeNotes: Initial release / Minor changes.
