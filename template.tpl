@@ -91,6 +91,13 @@ ___TEMPLATE_PARAMETERS___
         "defaultValue": true
       },
       {
+        "type": "CHECKBOX",
+        "name": "basicConsentMode",
+        "checkboxText": "Activate Basic Consent Mode",
+        "simpleValueType": true,
+        "defaultValue": false
+      },
+      {
         "type": "SELECT",
         "name": "command",
         "displayName": "Consent types",
@@ -440,12 +447,13 @@ const gtagSet = require('gtagSet');
 
 // inject iab stub
 let scriptUrlStub = 'https://cdn.appconsent.io/scripts/stub-iab-sfbx.js';
-// let 's start by loading the IAB Stub
+// let's start by loading the IAB Stub
 if (queryPermission('inject_script', scriptUrlStub)) {
   injectScript(scriptUrlStub, success, data.gtmOnFailure);
 } else {
   data.gtmOnFailure();
 }
+
 
 // Init config cmp
 const APP_KEY = data.appKey;
@@ -456,6 +464,7 @@ const forceGdprApplies = data.forceGdprApplies;
 const domTarget = null;
 let privacyWidget = null;
 const enableGCM = data.enableGCM;
+const basicConsentMode = data.basicConsentMode;
 
 // Privacy widget  
 const usePrivacyWidget = data.UsePrivacyWidget;
@@ -518,12 +527,19 @@ var configSFBXAppConsent = {
   privacyWidget: privacyWidget,
   targetCountries: targetCountries,
   urlRedirect: urlRedirect,
-  enableGCM : data.enableGCM
+  enableGCM : data.enableGCM,
+  googleEnableBasicConsentMode: basicConsentMode
 };
 setInWindow('configSFBXAppConsent', configSFBXAppConsent, true);
 
 
 // init GCM
+const windowGtag = copyFromWindow("gtag");
+if (typeof windowGtag === 'function') {
+  const isGtagInitBeforeAppConsent = true;
+  setInWindow('isGtagInitBeforeAppConsent', isGtagInitBeforeAppConsent, true);
+}
+
 const gtag = createArgumentsQueue('gtag', 'dataLayer');
 gtagSet('developer_id.dYTM3Mj', true);
 
@@ -533,9 +549,8 @@ const adsbygoogle = adsbygoogleFromWindow || [];
 adsbygoogle.pauseAdRequests = 1;
 setInWindow('adsbygoogle', adsbygoogle, true);
 
-
 let gtmConsent = {};
-if(enableGCM) {
+if(enableGCM && !basicConsentMode) {
   if(data.command === 'default') {
     gtmConsent = {
       ad_storage: 'denied',
@@ -596,7 +611,7 @@ ___WEB_PERMISSIONS___
           "key": "environments",
           "value": {
             "type": 1,
-            "string": "debug"
+            "string": "all"
           }
         }
       ]
@@ -773,6 +788,45 @@ ___WEB_PERMISSIONS___
                     "boolean": false
                   }
                 ]
+              },
+              {
+                "type": 3,
+                "mapKey": [
+                  {
+                    "type": 1,
+                    "string": "key"
+                  },
+                  {
+                    "type": 1,
+                    "string": "read"
+                  },
+                  {
+                    "type": 1,
+                    "string": "write"
+                  },
+                  {
+                    "type": 1,
+                    "string": "execute"
+                  }
+                ],
+                "mapValue": [
+                  {
+                    "type": 1,
+                    "string": "isGtagInitBeforeAppConsent"
+                  },
+                  {
+                    "type": 8,
+                    "boolean": true
+                  },
+                  {
+                    "type": 8,
+                    "boolean": true
+                  },
+                  {
+                    "type": 8,
+                    "boolean": false
+                  }
+                ]
               }
             ]
           }
@@ -799,6 +853,10 @@ ___WEB_PERMISSIONS___
               {
                 "type": 1,
                 "string": "https://cdn.appconsent.io/*"
+              },
+              {
+                "type": 1,
+                "string": "https://ac-feature.datalf.chat/*"
               }
             ]
           }
